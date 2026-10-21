@@ -27,6 +27,7 @@
 GLuint program;			// shader programs
 GLuint triangleVAO;		// the data to be displayed
 GLuint coneVAO;
+GLuint planeVAO;
 float angle = 0.0;
 double theta, phi;		// user's position  on a sphere centered on the object
 double r;				// radius of the sphere
@@ -46,6 +47,7 @@ const float PI = 3.14159265358979323846;
 void init() {
 	GLuint vbuffer;
 	GLuint coneVbuffer;
+	GLuint planeVbuffer;
 	GLint vPosition;
 	GLint vNormal;
 	int vs;
@@ -66,14 +68,14 @@ void init() {
 		{0.65 * cos(315 * PI / 180), 0.0, 0.65 * sin(315 * PI / 180), 1.0}, //7
 
 		//Top ring of the cylinder plane for the tree trunk
-		{0.65 * cos(0 * PI / 180), 3.8, 0.65 * sin(0 * PI / 180), 1.0}, //8
-		{0.65 * cos(45 * PI / 180), 3.8, 0.65 * sin(45 * PI / 180), 1.0}, //9
-		{0.65 * cos(90 * PI / 180), 3.8, 0.65 * sin(90 * PI / 180), 1.0}, //10
-		{0.65 * cos(135 * PI / 180), 3.8, 0.65 * sin(135 * PI / 180), 1.0}, //11
-		{0.65 * cos(180 * PI / 180), 3.8, 0.65 * sin(180 * PI / 180), 1.0}, //12
-		{0.65 * cos(225 * PI / 180), 3.8, 0.65 * sin(225 * PI / 180), 1.0}, //13
-		{0.65 * cos(270 * PI / 180), 3.8, 0.65 * sin(270 * PI / 180), 1.0}, //14
-		{0.65 * cos(315 * PI / 180), 3.8, 0.65 * sin(315 * PI / 180), 1.0} //15
+		{0.65 * cos(0 * PI / 180), 2.5, 0.65 * sin(0 * PI / 180), 1.0}, //8
+		{0.65 * cos(45 * PI / 180), 2.5, 0.65 * sin(45 * PI / 180), 1.0}, //9
+		{0.65 * cos(90 * PI / 180), 2.5, 0.65 * sin(90 * PI / 180), 1.0}, //10
+		{0.65 * cos(135 * PI / 180), 2.5, 0.65 * sin(135 * PI / 180), 1.0}, //11
+		{0.65 * cos(180 * PI / 180), 2.5, 0.65 * sin(180 * PI / 180), 1.0}, //12
+		{0.65 * cos(225 * PI / 180), 2.5, 0.65 * sin(225 * PI / 180), 1.0}, //13
+		{0.65 * cos(270 * PI / 180), 2.5, 0.65 * sin(270 * PI / 180), 1.0}, //14
+		{0.65 * cos(315 * PI / 180), 2.5, 0.65 * sin(315 * PI / 180), 1.0} //15
 	};
 	GLfloat normals[16][3] = {
 		{cos(0 * PI / 180), 0.0, sin(0 * PI / 180)}, //0
@@ -196,6 +198,35 @@ void init() {
 	glVertexAttribPointer(vNormal, 3, GL_FLOAT, GL_FALSE, 0, (void*) sizeof(coneVertices));
 	glEnableVertexAttribArray(vNormal);
 
+	GLfloat planeVertices[6][4] = {
+		{ -50.0f, -0.02f, -50.0f, 1.0f },
+		{  50.0f, -0.02f,  50.0f, 1.0f },
+		{  50.0f, -0.02f, -50.0f, 1.0f },
+		{ -50.0f, -0.02f, -50.0f, 1.0f },
+		{ -50.0f, -0.02f,  50.0f, 1.0f },
+		{  50.0f, -0.02f,  50.0f, 1.0f }
+	};
+	GLfloat planeNormals[6][3] = {
+		{ 0.0f, 1.0f, 0.0f }, { 0.0f, 1.0f, 0.0f }, { 0.0f, 1.0f, 0.0f },
+		{ 0.0f, 1.0f, 0.0f }, { 0.0f, 1.0f, 0.0f }, { 0.0f, 1.0f, 0.0f }
+	};
+
+	glGenVertexArrays(1, &planeVAO);
+	glBindVertexArray(planeVAO);
+	glGenBuffers(1, &planeVbuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, planeVbuffer);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(planeVertices) + sizeof(planeNormals), NULL, GL_STATIC_DRAW);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(planeVertices), planeVertices);
+	glBufferSubData(GL_ARRAY_BUFFER, sizeof(planeVertices), sizeof(planeNormals), planeNormals);
+
+	glUseProgram(program);
+	vPosition = glGetAttribLocation(program, "vPosition");
+	glVertexAttribPointer(vPosition, 4, GL_FLOAT, GL_FALSE, 0, 0);
+	glEnableVertexAttribArray(vPosition);
+	vNormal = glGetAttribLocation(program, "vNormal");
+	glVertexAttribPointer(vNormal, 3, GL_FLOAT, GL_FALSE, 0, (void*) sizeof(planeVertices));
+	glEnableVertexAttribArray(vNormal);
+
 }
 
 void framebufferSizeCallback(GLFWwindow *window, int w, int h) {
@@ -248,11 +279,16 @@ void display() {
 	glUniformMatrix3fv(normalLoc, 1, 0, glm::value_ptr(normal));
 	glUniform4f(colourLoc, 0.36f, 0.18f, 0.05f, 1.0f);
 
+	glBindVertexArray(planeVAO);
+	glUniform4f(colourLoc, 0.025f, 0.16f, 0.045f, 1.0f);
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+
 	glBindVertexArray(triangleVAO);
+	glUniform4f(colourLoc, 0.36f, 0.18f, 0.05f, 1.0f);
 	glDrawElements(GL_TRIANGLES, 48, GL_UNSIGNED_SHORT, NULL);
 
 	const float coneRadii[4] = { 3.0f, 2.35f, 1.7f, 1.1f };
-	const float coneBases[4] = { 3.5f, 5.25f, 7.0f, 8.75f };
+	const float coneBases[4] = { 2.5f, 4.25f, 6.0f, 7.75f };
 	const float coneHeights[4] = { 2.4f, 2.3f, 2.2f, 2.0f };
 	glBindVertexArray(coneVAO);
 	for (int i = 0; i < 4; ++i) {
