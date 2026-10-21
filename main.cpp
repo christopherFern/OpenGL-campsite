@@ -26,6 +26,7 @@
 
 GLuint program;			// shader programs
 GLuint triangleVAO;		// the data to be displayed
+GLuint coneVAO;
 float angle = 0.0;
 double theta, phi;		// user's position  on a sphere centered on the object
 double r;				// radius of the sphere
@@ -44,6 +45,7 @@ const float PI = 3.14159265358979323846;
 
 void init() {
 	GLuint vbuffer;
+	GLuint coneVbuffer;
 	GLint vPosition;
 	GLint vNormal;
 	int vs;
@@ -54,24 +56,24 @@ void init() {
 
 	GLfloat vertices[16][4] = {
 		//Bottom ring of the cylinder plane for the tree tunk
-		{cos(0 * PI / 180), 0.0, sin(0 * PI / 180), 1.0}, //0
-		{cos(45 * PI / 180), 0.0, sin(45 * PI / 180), 1.0}, //1
-		{cos(90 * PI / 180), 0.0, sin(90 * PI / 180), 1.0}, //2
-		{cos(135 * PI / 180), 0.0, sin(135 * PI / 180), 1.0}, //3
-		{cos(180 * PI / 180), 0.0, sin(180 * PI / 180), 1.0}, //4
-		{cos(225 * PI / 180), 0.0, sin(225 * PI / 180), 1.0}, //5
-		{cos(270 * PI / 180), 0.0, sin(270 * PI / 180), 1.0}, //6
-		{cos(315 * PI / 180), 0.0, sin(315 * PI / 180), 1.0}, //7
+		{0.65 * cos(0 * PI / 180), 0.0, 0.65 * sin(0 * PI / 180), 1.0}, //0
+		{0.65 * cos(45 * PI / 180), 0.0, 0.65 * sin(45 * PI / 180), 1.0}, //1
+		{0.65 * cos(90 * PI / 180), 0.0, 0.65 * sin(90 * PI / 180), 1.0}, //2
+		{0.65 * cos(135 * PI / 180), 0.0, 0.65 * sin(135 * PI / 180), 1.0}, //3
+		{0.65 * cos(180 * PI / 180), 0.0, 0.65 * sin(180 * PI / 180), 1.0}, //4
+		{0.65 * cos(225 * PI / 180), 0.0, 0.65 * sin(225 * PI / 180), 1.0}, //5
+		{0.65 * cos(270 * PI / 180), 0.0, 0.65 * sin(270 * PI / 180), 1.0}, //6
+		{0.65 * cos(315 * PI / 180), 0.0, 0.65 * sin(315 * PI / 180), 1.0}, //7
 
 		//Top ring of the cylinder plane for the tree trunk
-		{cos(0 * PI / 180), 5.0, sin(0 * PI / 180), 1.0}, //8
-		{cos(45 * PI / 180), 5.0, sin(45 * PI / 180), 1.0}, //9
-		{cos(90 * PI / 180), 5.0, sin(90 * PI / 180), 1.0}, //10
-		{cos(135 * PI / 180), 5.0, sin(135 * PI / 180), 1.0}, //11
-		{cos(180 * PI / 180), 5.0, sin(180 * PI / 180), 1.0}, //12
-		{cos(225 * PI / 180), 5.0, sin(225 * PI / 180), 1.0}, //13
-		{cos(270 * PI / 180), 5.0, sin(270 * PI / 180), 1.0}, //14
-		{cos(315 * PI / 180), 5.0, sin(315 * PI / 180), 1.0} //15
+		{0.65 * cos(0 * PI / 180), 3.8, 0.65 * sin(0 * PI / 180), 1.0}, //8
+		{0.65 * cos(45 * PI / 180), 3.8, 0.65 * sin(45 * PI / 180), 1.0}, //9
+		{0.65 * cos(90 * PI / 180), 3.8, 0.65 * sin(90 * PI / 180), 1.0}, //10
+		{0.65 * cos(135 * PI / 180), 3.8, 0.65 * sin(135 * PI / 180), 1.0}, //11
+		{0.65 * cos(180 * PI / 180), 3.8, 0.65 * sin(180 * PI / 180), 1.0}, //12
+		{0.65 * cos(225 * PI / 180), 3.8, 0.65 * sin(225 * PI / 180), 1.0}, //13
+		{0.65 * cos(270 * PI / 180), 3.8, 0.65 * sin(270 * PI / 180), 1.0}, //14
+		{0.65 * cos(315 * PI / 180), 3.8, 0.65 * sin(315 * PI / 180), 1.0} //15
 	};
 	GLfloat normals[16][3] = {
 		{cos(0 * PI / 180), 0.0, sin(0 * PI / 180)}, //0
@@ -110,39 +112,6 @@ void init() {
 		7, 0, 15,
 		15, 8, 0
 	};
-	//Leaves for the tree
-	GLfloat leafVertices[9][4] = {
-		{4*cos(0 * PI / 180), 5.0, 4*sin(0 * PI / 180), 1.0}, //0
-		{4*cos(45 * PI / 180), 5.0, 4*sin(45 * PI / 180), 1.0}, //1
-		{4*cos(90 * PI / 180), 5.0, 4*sin(90 * PI / 180), 1.0}, //2
-		{4*cos(135 * PI / 180), 5.0, 4*sin(135 * PI / 180), 1.0}, //3
-		{4*cos(180 * PI / 180), 5.0, 4*sin(180 * PI / 180), 1.0}, //4
-		{4*cos(225 * PI / 180), 5.0, 4*sin(225 * PI / 180), 1.0}, //5
-		{4*cos(270 * PI / 180), 5.0, 4*sin(270 * PI / 180), 1.0}, //6
-		{4*cos(315 * PI / 180), 5.0, 4*sin(315 * PI / 180), 1.0}, //7
-		{0.0, 15.0, 0.0, 1.0} //8
-	};
-	GLfloat leafNormals[9][3] = {
-		{cos(0 * PI / 180), 0.0, sin(0 * PI / 180)}, //0
-		{cos(45 * PI / 180), 0.0, sin(45 * PI / 180)}, //1
-		{cos(90 * PI / 180), 0.0, sin(90 * PI / 180)}, //2
-		{cos(135 * PI / 180), 0.0, sin(135 * PI / 180)}, //3
-		{cos(180 * PI / 180), 0.0, sin(180 * PI / 180)}, //4
-		{cos(225 * PI / 180), 0.0, sin(225 * PI / 180)}, //5
-		{cos(270 * PI / 180), 0.0, sin(270 * PI / 180)}, //6
-		{cos(315 * PI / 180), 0.0, sin(315 * PI / 180)}, //7
-		{0.0, -1.0, 0.0} //8
-	};
-	GLushort leafIndexes[24] = {
-		0, 1, 8,
-		1, 2, 8,
-		2, 3, 8,
-		3, 4, 8,
-		4, 5, 8,
-		5, 6, 8,
-		6, 7, 8,
-		7, 0, 8
-	};
 
 	/*
 	 *  load the vertex coordinate data
@@ -179,6 +148,54 @@ void init() {
 	glVertexAttribPointer(vNormal, 3, GL_FLOAT, GL_FALSE, 0, (void*) sizeof(vertices));
 	glEnableVertexAttribArray(vNormal);
 
+	GLfloat coneVertices[24][4];
+	GLfloat coneNormals[24][3];
+	for (int side = 0; side < 8; ++side) {
+		float angle0 = side * 2.0f * PI / 8.0f;
+		float angle1 = (side + 1) * 2.0f * PI / 8.0f;
+		float middleAngle = (angle0 + angle1) * 0.5f;
+		float normalLength = sqrt(2.0f);
+		float nx = cos(middleAngle) / normalLength;
+		float ny = 1.0f / normalLength;
+		float nz = sin(middleAngle) / normalLength;
+		int firstVertex = side * 3;
+
+		coneVertices[firstVertex][0] = cos(angle0);
+		coneVertices[firstVertex][1] = 0.0f;
+		coneVertices[firstVertex][2] = sin(angle0);
+		coneVertices[firstVertex][3] = 1.0f;
+		coneVertices[firstVertex + 1][0] = cos(angle1);
+		coneVertices[firstVertex + 1][1] = 0.0f;
+		coneVertices[firstVertex + 1][2] = sin(angle1);
+		coneVertices[firstVertex + 1][3] = 1.0f;
+		coneVertices[firstVertex + 2][0] = 0.0f;
+		coneVertices[firstVertex + 2][1] = 1.0f;
+		coneVertices[firstVertex + 2][2] = 0.0f;
+		coneVertices[firstVertex + 2][3] = 1.0f;
+
+		for (int vertex = 0; vertex < 3; ++vertex) {
+			coneNormals[firstVertex + vertex][0] = nx;
+			coneNormals[firstVertex + vertex][1] = ny;
+			coneNormals[firstVertex + vertex][2] = nz;
+		}
+	}
+
+	glGenVertexArrays(1, &coneVAO);
+	glBindVertexArray(coneVAO);
+	glGenBuffers(1, &coneVbuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, coneVbuffer);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(coneVertices) + sizeof(coneNormals), NULL, GL_STATIC_DRAW);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(coneVertices), coneVertices);
+	glBufferSubData(GL_ARRAY_BUFFER, sizeof(coneVertices), sizeof(coneNormals), coneNormals);
+
+	glUseProgram(program);
+	vPosition = glGetAttribLocation(program, "vPosition");
+	glVertexAttribPointer(vPosition, 4, GL_FLOAT, GL_FALSE, 0, 0);
+	glEnableVertexAttribArray(vPosition);
+	vNormal = glGetAttribLocation(program, "vNormal");
+	glVertexAttribPointer(vNormal, 3, GL_FLOAT, GL_FALSE, 0, (void*) sizeof(coneVertices));
+	glEnableVertexAttribArray(vNormal);
+
 }
 
 void framebufferSizeCallback(GLFWwindow *window, int w, int h) {
@@ -207,8 +224,9 @@ void display() {
 	glm::mat4 model;
 	glm::mat4 view;
 	glm::mat4 modelViewPerspective;
-	int modelLoc;
-	int normalLoc;
+	GLint modelLoc;
+	GLint normalLoc;
+	GLint colourLoc;
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glUseProgram(program);
@@ -219,18 +237,38 @@ void display() {
 					glm::vec3(0.0f, 0.0f, 0.0f),
 					glm::vec3(0.0f, 1.0f, 0.0f));
 
-	glm::mat3 normal = glm::transpose(glm::inverse(glm::mat3(view*model)));
-					
-	modelViewPerspective = projection * view * model;
-
 	glUseProgram(program);
-	modelLoc = glGetUniformLocation(program,"model");
+	modelLoc = glGetUniformLocation(program, "model");
+	normalLoc = glGetUniformLocation(program, "normalMat");
+	colourLoc = glGetUniformLocation(program, "objectColour");
+
+	glm::mat3 normal = glm::transpose(glm::inverse(glm::mat3(view * model)));
+	modelViewPerspective = projection * view * model;
 	glUniformMatrix4fv(modelLoc, 1, 0, glm::value_ptr(modelViewPerspective));
-	normalLoc = glGetUniformLocation(program,"normalMat");
 	glUniformMatrix3fv(normalLoc, 1, 0, glm::value_ptr(normal));
+	glUniform4f(colourLoc, 0.36f, 0.18f, 0.05f, 1.0f);
 
 	glBindVertexArray(triangleVAO);
 	glDrawElements(GL_TRIANGLES, 48, GL_UNSIGNED_SHORT, NULL);
+
+	const float coneRadii[4] = { 3.0f, 2.35f, 1.7f, 1.1f };
+	const float coneBases[4] = { 3.5f, 5.25f, 7.0f, 8.75f };
+	const float coneHeights[4] = { 2.4f, 2.3f, 2.2f, 2.0f };
+	glBindVertexArray(coneVAO);
+	for (int i = 0; i < 4; ++i) {
+		if (i == 1 || i == 3)
+			glUniform4f(colourLoc, 0.08f, 0.42f, 0.12f, 1.0f);
+		else
+			glUniform4f(colourLoc, 0.28f, 0.62f, 0.20f, 1.0f);
+
+		glm::mat4 coneModel = glm::translate(model, glm::vec3(0.0f, coneBases[i], 0.0f));
+		coneModel = glm::scale(coneModel, glm::vec3(coneRadii[i], coneHeights[i], coneRadii[i]));
+		glm::mat3 coneNormal = glm::transpose(glm::inverse(glm::mat3(view * coneModel)));
+		glm::mat4 coneMVP = projection * view * coneModel;
+		glUniformMatrix4fv(modelLoc, 1, 0, glm::value_ptr(coneMVP));
+		glUniformMatrix3fv(normalLoc, 1, 0, glm::value_ptr(coneNormal));
+		glDrawArrays(GL_TRIANGLES, 0, 24);
+	}
 
 }
 
@@ -253,6 +291,10 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 		theta += 0.1;
 	if (key == GLFW_KEY_S && action == GLFW_PRESS)
 		theta -= 0.1;
+	if (key == GLFW_KEY_UP && action == GLFW_PRESS)
+		r = glm::max(2.0, r - 1.0);
+	if (key == GLFW_KEY_DOWN && action == GLFW_PRESS)
+		r = glm::min(99.0, r + 1.0);
 
 	 eyex = (float)(r*sin(theta)*cos(phi));
 	 eyey = (float)(r*sin(theta)*sin(phi));
@@ -320,12 +362,12 @@ int main(int argc, char **argv) {
 	init();
 
 	eyex = 0.0;
-	eyez = 10.0;
-	eyey = 15.0;
+	eyey = 8.0;
+	eyez = 22.0;
 
-	theta = 0.0;
-	phi = -1.5;
-	r = 4.0;
+	theta = 0.35;
+	phi = PI / 2.0;
+	r = 23.4;
 
 	glfwSwapInterval(1);
 
