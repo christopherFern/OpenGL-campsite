@@ -23,11 +23,17 @@
 #include <glm/gtc/type_ptr.hpp>
 #include "Shaders.h"
 #include <stdio.h>
+#include <vector>
+#include "tiny_obj_loader.h"
 
 GLuint program;			// shader programs
 GLuint triangleVAO;		// the data to be displayed
 GLuint coneVAO;
 GLuint planeVAO;
+GLuint tableVAO;
+GLsizei tableIndexCount;
+glm::vec3 tableOffset;
+const glm::vec3 tablePosition(0.0f, 0.0f, 0.0f);
 float angle = 0.0;
 double theta, phi;		// user's position  on a sphere centered on the object
 double r;				// radius of the sphere
@@ -227,6 +233,88 @@ void init() {
 	glVertexAttribPointer(vNormal, 3, GL_FLOAT, GL_FALSE, 0, (void*) sizeof(planeVertices));
 	glEnableVertexAttribArray(vNormal);
 
+	std::vector<tinyobj::shape_t> tableShapes;
+	std::vector<tinyobj::material_t> tableMaterials;
+	std::string tableLoadError = tinyobj::LoadObj(
+		tableShapes, tableMaterials, "objects/wooden_table.obj", "objects/");
+	if (!tableLoadError.empty()) {
+		fprintf(stderr, "Could not load objects/wooden_table.obj: %s\n", tableLoadError.c_str());
+		exit(EXIT_FAILURE);
+	}
+
+	std::vector<GLfloat> tableVertices;
+	std::vector<unsigned int> tableIndices;
+	float minX = 0.0f, maxX = 0.0f;
+	float minY = 0.0f;
+	float minZ = 0.0f, maxZ = 0.0f;
+	bool hasTableVertex = false;
+	for (size_t shapeIndex = 0; shapeIndex < tableShapes.size(); ++shapeIndex) {
+		const tinyobj::mesh_t& mesh = tableShapes[shapeIndex].mesh;
+		if (mesh.positions.size() % 3 != 0 || mesh.normals.size() != mesh.positions.size()) {
+			fprintf(stderr, "Invalid vertex or normal data in objects/wooden_table.obj\n");
+			exit(EXIT_FAILURE);
+		}
+
+		unsigned int vertexOffset = static_cast<unsigned int>(tableVertices.size() / 7);
+		for (size_t vertex = 0; vertex < mesh.positions.size() / 3; ++vertex) {
+			float x = mesh.positions[3 * vertex];
+			float y = mesh.positions[3 * vertex + 1];
+			float z = mesh.positions[3 * vertex + 2];
+			if (!hasTableVertex) {
+				minX = maxX = x;
+				minY = y;
+				minZ = maxZ = z;
+				hasTableVertex = true;
+			} else {
+				minX = glm::min(minX, x);
+				maxX = glm::max(maxX, x);
+				minY = glm::min(minY, y);
+				minZ = glm::min(minZ, z);
+				maxZ = glm::max(maxZ, z);
+			}
+
+			tableVertices.push_back(x);
+			tableVertices.push_back(y);
+			tableVertices.push_back(z);
+			tableVertices.push_back(1.0f);
+			tableVertices.push_back(mesh.normals[3 * vertex]);
+			tableVertices.push_back(mesh.normals[3 * vertex + 1]);
+			tableVertices.push_back(mesh.normals[3 * vertex + 2]);
+		}
+
+		for (size_t index = 0; index < mesh.indices.size(); ++index)
+			tableIndices.push_back(vertexOffset + mesh.indices[index]);
+	}
+
+	if (!hasTableVertex || tableIndices.empty()) {
+		fprintf(stderr, "No table geometry was loaded from objects/wooden_table.obj\n");
+		exit(EXIT_FAILURE);
+	}
+	tableIndexCount = static_cast<GLsizei>(tableIndices.size());
+	tableOffset = glm::vec3(-(minX + maxX) * 0.5f, -minY, -(minZ + maxZ) * 0.5f);
+
+	GLuint tableVbuffer;
+	GLuint tableIbuffer;
+	glGenVertexArrays(1, &tableVAO);
+	glBindVertexArray(tableVAO);
+	glGenBuffers(1, &tableVbuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, tableVbuffer);
+	glBufferData(GL_ARRAY_BUFFER, tableVertices.size() * sizeof(GLfloat),
+		tableVertices.data(), GL_STATIC_DRAW);
+	glGenBuffers(1, &tableIbuffer);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, tableIbuffer);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, tableIndices.size() * sizeof(unsigned int),
+		tableIndices.data(), GL_STATIC_DRAW);
+
+	glUseProgram(program);
+	vPosition = glGetAttribLocation(program, "vPosition");
+	glVertexAttribPointer(vPosition, 4, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), 0);
+	glEnableVertexAttribArray(vPosition);
+	vNormal = glGetAttribLocation(program, "vNormal");
+	glVertexAttribPointer(vNormal, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat),
+		(void*)(4 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(vNormal);
+
 }
 
 void framebufferSizeCallback(GLFWwindow *window, int w, int h) {
@@ -280,6 +368,17 @@ void display() {
 	glBindVertexArray(planeVAO);
 	glUniform4f(colourLoc, 0.025f, 0.16f, 0.045f, 1.0f);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
+
+	glm::mat4 tableModel = glm::translate(model, tablePosition);
+	tableModel = glm::scale(tableModel, glm::vec3(0.03f));
+	tableModel = glm::translate(tableModel, tableOffset);
+	glm::mat3 tableNormal = glm::transpose(glm::inverse(glm::mat3(view * tableModel)));
+	glm::mat4 tableMVP = projection * view * tableModel;
+	glUniformMatrix4fv(modelLoc, 1, 0, glm::value_ptr(tableMVP));
+	glUniformMatrix3fv(normalLoc, 1, 0, glm::value_ptr(tableNormal));
+	glUniform4f(colourLoc, 0.42f, 0.22f, 0.09f, 1.0f);
+	glBindVertexArray(tableVAO);
+	glDrawElements(GL_TRIANGLES, tableIndexCount, GL_UNSIGNED_INT, NULL);
 
 	const float coneRadii[4] = { 3.0f, 2.35f, 1.7f, 1.1f };
 	const float coneBases[4] = { 2.5f, 4.25f, 6.0f, 7.75f };
