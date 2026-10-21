@@ -277,33 +277,79 @@ void display() {
 	modelViewPerspective = projection * view * model;
 	glUniformMatrix4fv(modelLoc, 1, 0, glm::value_ptr(modelViewPerspective));
 	glUniformMatrix3fv(normalLoc, 1, 0, glm::value_ptr(normal));
-	glUniform4f(colourLoc, 0.36f, 0.18f, 0.05f, 1.0f);
-
 	glBindVertexArray(planeVAO);
 	glUniform4f(colourLoc, 0.025f, 0.16f, 0.045f, 1.0f);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 
-	glBindVertexArray(triangleVAO);
-	glUniform4f(colourLoc, 0.36f, 0.18f, 0.05f, 1.0f);
-	glDrawElements(GL_TRIANGLES, 48, GL_UNSIGNED_SHORT, NULL);
-
 	const float coneRadii[4] = { 3.0f, 2.35f, 1.7f, 1.1f };
 	const float coneBases[4] = { 2.5f, 4.25f, 6.0f, 7.75f };
 	const float coneHeights[4] = { 2.4f, 2.3f, 2.2f, 2.0f };
-	glBindVertexArray(coneVAO);
-	for (int i = 0; i < 4; ++i) {
-		if (i == 1 || i == 3)
-			glUniform4f(colourLoc, 0.08f, 0.42f, 0.12f, 1.0f);
-		else
-			glUniform4f(colourLoc, 0.28f, 0.62f, 0.20f, 1.0f);
+	const glm::vec3 treePositions[] = {
+		glm::vec3(-38.0f, 0.0f, -36.0f), glm::vec3(-23.0f, 0.0f, -40.0f),
+		glm::vec3(-7.0f, 0.0f, -38.0f), glm::vec3(11.0f, 0.0f, -40.0f),
+		glm::vec3(29.0f, 0.0f, -37.0f), glm::vec3(42.0f, 0.0f, -31.0f),
+		glm::vec3(-42.0f, 0.0f, -19.0f), glm::vec3(-29.0f, 0.0f, -23.0f),
+		glm::vec3(-14.0f, 0.0f, -25.0f), glm::vec3(17.0f, 0.0f, -25.0f),
+		glm::vec3(32.0f, 0.0f, -21.0f), glm::vec3(44.0f, 0.0f, -13.0f),
+		glm::vec3(-43.0f, 0.0f, 1.0f), glm::vec3(-29.0f, 0.0f, 5.0f),
+		glm::vec3(-17.0f, 0.0f, 13.0f), glm::vec3(18.0f, 0.0f, 12.0f),
+		glm::vec3(31.0f, 0.0f, 5.0f), glm::vec3(43.0f, 0.0f, 3.0f),
+		glm::vec3(-39.0f, 0.0f, 21.0f), glm::vec3(-24.0f, 0.0f, 24.0f),
+		glm::vec3(-9.0f, 0.0f, 29.0f), glm::vec3(10.0f, 0.0f, 27.0f),
+		glm::vec3(28.0f, 0.0f, 23.0f), glm::vec3(41.0f, 0.0f, 19.0f),
+		glm::vec3(-31.0f, 0.0f, 39.0f), glm::vec3(-12.0f, 0.0f, 42.0f),
+		glm::vec3(9.0f, 0.0f, 41.0f), glm::vec3(30.0f, 0.0f, 40.0f),
+		glm::vec3(-35.0f, 0.0f, -29.0f), glm::vec3(-17.0f, 0.0f, -32.0f),
+		glm::vec3(0.0f, 0.0f, -29.0f), glm::vec3(18.0f, 0.0f, -33.0f),
+		glm::vec3(38.0f, 0.0f, -25.0f), glm::vec3(-36.0f, 0.0f, -10.0f),
+		glm::vec3(-22.0f, 0.0f, -14.0f), glm::vec3(-11.0f, 0.0f, -16.0f),
+		glm::vec3(13.0f, 0.0f, -16.0f), glm::vec3(24.0f, 0.0f, -13.0f),
+		glm::vec3(38.0f, 0.0f, -8.0f), glm::vec3(-38.0f, 0.0f, 10.0f),
+		glm::vec3(-27.0f, 0.0f, 16.0f), glm::vec3(-13.0f, 0.0f, 22.0f),
+		glm::vec3(14.0f, 0.0f, 21.0f), glm::vec3(25.0f, 0.0f, 14.0f),
+		glm::vec3(38.0f, 0.0f, 13.0f), glm::vec3(-34.0f, 0.0f, 30.0f),
+		glm::vec3(-19.0f, 0.0f, 34.0f), glm::vec3(0.0f, 0.0f, 36.0f),
+		glm::vec3(18.0f, 0.0f, 33.0f), glm::vec3(38.0f, 0.0f, 31.0f)
+	};
+	const float treeScales[] = {
+		0.9f, 1.0f, 0.8f, 1.05f, 0.9f, 1.0f,
+		1.0f, 0.85f, 1.0f, 0.9f, 1.05f, 0.8f,
+		0.9f, 1.0f, 0.8f, 1.0f, 0.9f, 1.05f,
+		1.0f, 0.85f, 1.0f, 0.9f, 1.05f, 0.8f,
+		0.9f, 1.0f, 0.85f, 1.0f,
+		0.8f, 0.95f, 1.05f, 0.85f, 1.0f, 0.9f,
+		0.8f, 1.0f, 0.9f, 1.05f, 0.85f, 1.0f,
+		0.9f, 1.05f, 0.8f, 0.95f, 1.0f, 0.85f,
+		1.05f, 0.9f, 0.8f, 1.0f
+	};
 
-		glm::mat4 coneModel = glm::translate(model, glm::vec3(0.0f, coneBases[i], 0.0f));
-		coneModel = glm::scale(coneModel, glm::vec3(coneRadii[i], coneHeights[i], coneRadii[i]));
-		glm::mat3 coneNormal = glm::transpose(glm::inverse(glm::mat3(view * coneModel)));
-		glm::mat4 coneMVP = projection * view * coneModel;
-		glUniformMatrix4fv(modelLoc, 1, 0, glm::value_ptr(coneMVP));
-		glUniformMatrix3fv(normalLoc, 1, 0, glm::value_ptr(coneNormal));
-		glDrawArrays(GL_TRIANGLES, 0, 24);
+	for (int tree = 0; tree < sizeof(treePositions) / sizeof(treePositions[0]); ++tree) {
+		glm::mat4 treeModel = glm::translate(model, treePositions[tree]);
+		treeModel = glm::scale(treeModel, glm::vec3(treeScales[tree]));
+		glm::mat3 treeNormal = glm::transpose(glm::inverse(glm::mat3(view * treeModel)));
+		glm::mat4 treeMVP = projection * view * treeModel;
+
+		glUniformMatrix4fv(modelLoc, 1, 0, glm::value_ptr(treeMVP));
+		glUniformMatrix3fv(normalLoc, 1, 0, glm::value_ptr(treeNormal));
+		glUniform4f(colourLoc, 0.36f, 0.18f, 0.05f, 1.0f);
+		glBindVertexArray(triangleVAO);
+		glDrawElements(GL_TRIANGLES, 48, GL_UNSIGNED_SHORT, NULL);
+
+		glBindVertexArray(coneVAO);
+		for (int i = 0; i < 4; ++i) {
+			if (i == 1 || i == 3)
+				glUniform4f(colourLoc, 0.08f, 0.42f, 0.12f, 1.0f);
+			else
+				glUniform4f(colourLoc, 0.28f, 0.62f, 0.20f, 1.0f);
+
+			glm::mat4 coneModel = glm::translate(treeModel, glm::vec3(0.0f, coneBases[i], 0.0f));
+			coneModel = glm::scale(coneModel, glm::vec3(coneRadii[i], coneHeights[i], coneRadii[i]));
+			glm::mat3 coneNormal = glm::transpose(glm::inverse(glm::mat3(view * coneModel)));
+			glm::mat4 coneMVP = projection * view * coneModel;
+			glUniformMatrix4fv(modelLoc, 1, 0, glm::value_ptr(coneMVP));
+			glUniformMatrix3fv(normalLoc, 1, 0, glm::value_ptr(coneNormal));
+			glDrawArrays(GL_TRIANGLES, 0, 24);
+		}
 	}
 
 }
