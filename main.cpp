@@ -48,12 +48,11 @@ const glm::vec3 campfirePosition(0.0f, 0.0f, -5.0f);
 const float chairRadius = 4.5f;
 const int chairCount = 5;
 float angle = 0.0;
-double theta, phi;		// user's position  on a sphere centered on the object
-double r;				// radius of the sphere
 GLuint ibuffer;
 
 glm::mat4 projection;	// projection matrix
-float eyex, eyey, eyez;	// eye position
+glm::vec3 userPosition(0.0f, 2.4f, 22.0f);
+float userHeading = 0.0f;
 const float PI = 3.14159265358979323846;
 
 bool loadObjModel(const char* filename, const char* materialPath,
@@ -378,9 +377,10 @@ void display() {
 
 	model = glm::rotate(glm::mat4(1.0), angle, glm::vec3(0.0, 1.0, 0.0));
 
-	view = glm::lookAt(glm::vec3(eyex, eyey, eyez),
-					glm::vec3(0.0f, 0.0f, 0.0f),
-					glm::vec3(0.0f, 1.0f, 0.0f));
+	glm::vec3 forward = glm::mat3(glm::rotate(glm::mat4(1.0f), userHeading,
+		glm::vec3(0.0f, 1.0f, 0.0f))) * glm::vec3(0.0f, 0.0f, -1.0f);
+	view = glm::lookAt(userPosition, userPosition + forward,
+		glm::vec3(0.0f, 1.0f, 0.0f));
 
 	glUseProgram(program);
 	modelLoc = glGetUniformLocation(program, "model");
@@ -580,22 +580,31 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, GLFW_TRUE);
 
-	if (key == GLFW_KEY_A && action == GLFW_PRESS)
-		phi -= 0.1;
-	if (key == GLFW_KEY_D && action == GLFW_PRESS)
-		phi += 0.1;
-	if (key == GLFW_KEY_W && action == GLFW_PRESS)
-		theta += 0.1;
-	if (key == GLFW_KEY_S && action == GLFW_PRESS)
-		theta -= 0.1;
-	if (key == GLFW_KEY_UP && action == GLFW_PRESS)
-		r = glm::max(2.0, r - 1.0);
-	if (key == GLFW_KEY_DOWN && action == GLFW_PRESS)
-		r = glm::min(99.0, r + 1.0);
+	if (action != GLFW_PRESS && action != GLFW_REPEAT)
+		return;
 
-	 eyex = (float)(r*sin(theta)*cos(phi));
-	 eyey = (float)(r*sin(theta)*sin(phi));
-	 eyez = (float)(r*cos(theta));
+	const float moveStep = 1.0f;
+	const float turnStep = 0.12f;
+	switch (key) {
+	case GLFW_KEY_A:
+		userHeading += turnStep;
+		break;
+	case GLFW_KEY_D:
+		userHeading -= turnStep;
+		break;
+	case GLFW_KEY_W: {
+		glm::vec3 forward = glm::mat3(glm::rotate(glm::mat4(1.0f), userHeading,
+			glm::vec3(0.0f, 1.0f, 0.0f))) * glm::vec3(0.0f, 0.0f, -1.0f);
+		userPosition += moveStep * forward;
+		break;
+	}
+	case GLFW_KEY_S: {
+		glm::vec3 forward = glm::mat3(glm::rotate(glm::mat4(1.0f), userHeading,
+			glm::vec3(0.0f, 1.0f, 0.0f))) * glm::vec3(0.0f, 0.0f, -1.0f);
+		userPosition -= moveStep * forward;
+		break;
+	}
+	}
 
 }
 
@@ -607,12 +616,6 @@ void error_callback(int error, const char* description)
 
 int main(int argc, char **argv) {
 	GLFWwindow *window;
-	eyex = 10.0;
-	eyey = 5.0;
-	eyez = 10.0;
-	theta = 1.5;
-	phi = 1.5;
-	r = 10.0;	
 
 	// start by setting error callback in case something goes wrong
 
@@ -651,20 +654,12 @@ int main(int argc, char **argv) {
 	}
 
 	glEnable(GL_DEPTH_TEST);
-	glClearColor(1.0, 1.0, 1.0, 1.0);
+	glClearColor(0.48f, 0.68f, 0.88f, 1.0f);
 	glViewport(0, 0, 512, 512);
 
 	projection = glm::perspective(0.7f, 1.0f, 1.0f, 100.0f);
 
 	init();
-
-	eyex = 0.0;
-	eyey = 8.0;
-	eyez = 22.0;
-
-	theta = 0.35;
-	phi = PI / 2.0;
-	r = 23.4;
 
 	glfwSwapInterval(1);
 

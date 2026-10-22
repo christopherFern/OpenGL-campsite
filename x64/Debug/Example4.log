@@ -1,17 +1,21 @@
 ﻿  main.cpp
-C:\Users\chris\OneDrive\Desktop\Graphics Assignments\Assignment 1\OpenGL-campsite\main.cpp(57,40): warning C4305: 'initializing': truncation from 'double' to 'float'
+C:\Users\chris\OneDrive\Desktop\Graphics Assignments\Assignment 1\OpenGL-campsite\main.cpp(56,40): warning C4305: 'initializing': truncation from 'double' to 'float'
+C:\Users\chris\OneDrive\Desktop\Graphics Assignments\Assignment 1\OpenGL-campsite\main.cpp(164,9): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\chris\OneDrive\Desktop\Graphics Assignments\Assignment 1\OpenGL-campsite\main.cpp(164,9): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\chris\OneDrive\Desktop\Graphics Assignments\Assignment 1\OpenGL-campsite\main.cpp(164,40): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\chris\OneDrive\Desktop\Graphics Assignments\Assignment 1\OpenGL-campsite\main.cpp(164,40): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
 C:\Users\chris\OneDrive\Desktop\Graphics Assignments\Assignment 1\OpenGL-campsite\main.cpp(165,9): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
 C:\Users\chris\OneDrive\Desktop\Graphics Assignments\Assignment 1\OpenGL-campsite\main.cpp(165,9): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
-C:\Users\chris\OneDrive\Desktop\Graphics Assignments\Assignment 1\OpenGL-campsite\main.cpp(165,40): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
-C:\Users\chris\OneDrive\Desktop\Graphics Assignments\Assignment 1\OpenGL-campsite\main.cpp(165,40): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\chris\OneDrive\Desktop\Graphics Assignments\Assignment 1\OpenGL-campsite\main.cpp(165,41): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\chris\OneDrive\Desktop\Graphics Assignments\Assignment 1\OpenGL-campsite\main.cpp(165,41): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
 C:\Users\chris\OneDrive\Desktop\Graphics Assignments\Assignment 1\OpenGL-campsite\main.cpp(166,9): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
 C:\Users\chris\OneDrive\Desktop\Graphics Assignments\Assignment 1\OpenGL-campsite\main.cpp(166,9): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
 C:\Users\chris\OneDrive\Desktop\Graphics Assignments\Assignment 1\OpenGL-campsite\main.cpp(166,41): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
 C:\Users\chris\OneDrive\Desktop\Graphics Assignments\Assignment 1\OpenGL-campsite\main.cpp(166,41): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
 C:\Users\chris\OneDrive\Desktop\Graphics Assignments\Assignment 1\OpenGL-campsite\main.cpp(167,9): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
 C:\Users\chris\OneDrive\Desktop\Graphics Assignments\Assignment 1\OpenGL-campsite\main.cpp(167,9): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
-C:\Users\chris\OneDrive\Desktop\Graphics Assignments\Assignment 1\OpenGL-campsite\main.cpp(167,41): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
-C:\Users\chris\OneDrive\Desktop\Graphics Assignments\Assignment 1\OpenGL-campsite\main.cpp(167,41): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\chris\OneDrive\Desktop\Graphics Assignments\Assignment 1\OpenGL-campsite\main.cpp(167,42): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\chris\OneDrive\Desktop\Graphics Assignments\Assignment 1\OpenGL-campsite\main.cpp(167,42): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
 C:\Users\chris\OneDrive\Desktop\Graphics Assignments\Assignment 1\OpenGL-campsite\main.cpp(168,9): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
 C:\Users\chris\OneDrive\Desktop\Graphics Assignments\Assignment 1\OpenGL-campsite\main.cpp(168,9): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
 C:\Users\chris\OneDrive\Desktop\Graphics Assignments\Assignment 1\OpenGL-campsite\main.cpp(168,42): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
@@ -28,22 +32,22 @@ C:\Users\chris\OneDrive\Desktop\Graphics Assignments\Assignment 1\OpenGL-campsit
 C:\Users\chris\OneDrive\Desktop\Graphics Assignments\Assignment 1\OpenGL-campsite\main.cpp(171,9): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
 C:\Users\chris\OneDrive\Desktop\Graphics Assignments\Assignment 1\OpenGL-campsite\main.cpp(171,42): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
 C:\Users\chris\OneDrive\Desktop\Graphics Assignments\Assignment 1\OpenGL-campsite\main.cpp(171,42): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
-C:\Users\chris\OneDrive\Desktop\Graphics Assignments\Assignment 1\OpenGL-campsite\main.cpp(172,9): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
-C:\Users\chris\OneDrive\Desktop\Graphics Assignments\Assignment 1\OpenGL-campsite\main.cpp(172,9): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
-C:\Users\chris\OneDrive\Desktop\Graphics Assignments\Assignment 1\OpenGL-campsite\main.cpp(172,42): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
-C:\Users\chris\OneDrive\Desktop\Graphics Assignments\Assignment 1\OpenGL-campsite\main.cpp(172,42): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\chris\OneDrive\Desktop\Graphics Assignments\Assignment 1\OpenGL-campsite\main.cpp(174,9): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\chris\OneDrive\Desktop\Graphics Assignments\Assignment 1\OpenGL-campsite\main.cpp(174,9): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\chris\OneDrive\Desktop\Graphics Assignments\Assignment 1\OpenGL-campsite\main.cpp(174,40): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\chris\OneDrive\Desktop\Graphics Assignments\Assignment 1\OpenGL-campsite\main.cpp(174,40): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
 C:\Users\chris\OneDrive\Desktop\Graphics Assignments\Assignment 1\OpenGL-campsite\main.cpp(175,9): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
 C:\Users\chris\OneDrive\Desktop\Graphics Assignments\Assignment 1\OpenGL-campsite\main.cpp(175,9): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
-C:\Users\chris\OneDrive\Desktop\Graphics Assignments\Assignment 1\OpenGL-campsite\main.cpp(175,40): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
-C:\Users\chris\OneDrive\Desktop\Graphics Assignments\Assignment 1\OpenGL-campsite\main.cpp(175,40): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\chris\OneDrive\Desktop\Graphics Assignments\Assignment 1\OpenGL-campsite\main.cpp(175,41): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\chris\OneDrive\Desktop\Graphics Assignments\Assignment 1\OpenGL-campsite\main.cpp(175,41): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
 C:\Users\chris\OneDrive\Desktop\Graphics Assignments\Assignment 1\OpenGL-campsite\main.cpp(176,9): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
 C:\Users\chris\OneDrive\Desktop\Graphics Assignments\Assignment 1\OpenGL-campsite\main.cpp(176,9): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
 C:\Users\chris\OneDrive\Desktop\Graphics Assignments\Assignment 1\OpenGL-campsite\main.cpp(176,41): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
 C:\Users\chris\OneDrive\Desktop\Graphics Assignments\Assignment 1\OpenGL-campsite\main.cpp(176,41): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
 C:\Users\chris\OneDrive\Desktop\Graphics Assignments\Assignment 1\OpenGL-campsite\main.cpp(177,9): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
 C:\Users\chris\OneDrive\Desktop\Graphics Assignments\Assignment 1\OpenGL-campsite\main.cpp(177,9): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
-C:\Users\chris\OneDrive\Desktop\Graphics Assignments\Assignment 1\OpenGL-campsite\main.cpp(177,41): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
-C:\Users\chris\OneDrive\Desktop\Graphics Assignments\Assignment 1\OpenGL-campsite\main.cpp(177,41): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\chris\OneDrive\Desktop\Graphics Assignments\Assignment 1\OpenGL-campsite\main.cpp(177,42): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\chris\OneDrive\Desktop\Graphics Assignments\Assignment 1\OpenGL-campsite\main.cpp(177,42): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
 C:\Users\chris\OneDrive\Desktop\Graphics Assignments\Assignment 1\OpenGL-campsite\main.cpp(178,9): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
 C:\Users\chris\OneDrive\Desktop\Graphics Assignments\Assignment 1\OpenGL-campsite\main.cpp(178,9): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
 C:\Users\chris\OneDrive\Desktop\Graphics Assignments\Assignment 1\OpenGL-campsite\main.cpp(178,42): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
@@ -60,8 +64,4 @@ C:\Users\chris\OneDrive\Desktop\Graphics Assignments\Assignment 1\OpenGL-campsit
 C:\Users\chris\OneDrive\Desktop\Graphics Assignments\Assignment 1\OpenGL-campsite\main.cpp(181,9): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
 C:\Users\chris\OneDrive\Desktop\Graphics Assignments\Assignment 1\OpenGL-campsite\main.cpp(181,42): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
 C:\Users\chris\OneDrive\Desktop\Graphics Assignments\Assignment 1\OpenGL-campsite\main.cpp(181,42): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
-C:\Users\chris\OneDrive\Desktop\Graphics Assignments\Assignment 1\OpenGL-campsite\main.cpp(182,9): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
-C:\Users\chris\OneDrive\Desktop\Graphics Assignments\Assignment 1\OpenGL-campsite\main.cpp(182,9): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
-C:\Users\chris\OneDrive\Desktop\Graphics Assignments\Assignment 1\OpenGL-campsite\main.cpp(182,42): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
-C:\Users\chris\OneDrive\Desktop\Graphics Assignments\Assignment 1\OpenGL-campsite\main.cpp(182,42): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
   Example4.vcxproj -> C:\Users\chris\OneDrive\Desktop\Graphics Assignments\Assignment 1\OpenGL-campsite\x64\Debug\Example4.exe
