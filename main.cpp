@@ -33,19 +33,20 @@ GLuint planeVAO;
 GLuint tableVAO;
 GLsizei tableIndexCount;
 glm::vec3 tableOffset;
-const glm::vec3 tablePosition(0.0f, 0.0f, 0.0f);
+const glm::vec3 tablePosition(0.0f, 0.0f, 4.0f);
 GLuint tentVAO;
 GLsizei tentIndexCount;
 glm::vec3 tentOffset;
-const glm::vec3 tentPosition(5.5f, 0.0f, 0.0f);
+const glm::vec3 tentPosition(0.0f, 0.0f, -14.0f);
 GLuint chairVAO;
 GLsizei chairIndexCount;
 glm::vec3 chairOffset;
-const glm::vec3 chairPosition(-4.0f, 0.0f, 0.0f);
 GLuint campfireVAO;
 GLsizei campfireIndexCount;
 glm::vec3 campfireOffset;
 const glm::vec3 campfirePosition(0.0f, 0.0f, -5.0f);
+const float chairRadius = 4.5f;
+const int chairCount = 5;
 float angle = 0.0;
 double theta, phi;		// user's position  on a sphere centered on the object
 double r;				// radius of the sphere
@@ -415,25 +416,32 @@ void display() {
 	glBindVertexArray(tentVAO);
 	glDrawElements(GL_TRIANGLES, tentIndexCount, GL_UNSIGNED_INT, NULL);
 
-	glm::mat4 chairModel = glm::translate(model, chairPosition);
-	chairModel = glm::scale(chairModel, glm::vec3(3.0f));
-	chairModel = glm::translate(chairModel, chairOffset);
-	glm::mat3 chairNormal = glm::transpose(glm::inverse(glm::mat3(view * chairModel)));
-	glm::mat4 chairMVP = projection * view * chairModel;
-	glUniformMatrix4fv(modelLoc, 1, 0, glm::value_ptr(chairMVP));
-	glUniformMatrix3fv(normalLoc, 1, 0, glm::value_ptr(chairNormal));
 	glUniform4f(colourLoc, 0.46f, 0.25f, 0.10f, 1.0f);
 	glBindVertexArray(chairVAO);
-	glDrawElements(GL_TRIANGLES, chairIndexCount, GL_UNSIGNED_INT, NULL);
+	for (int chair = 0; chair < chairCount; ++chair) {
+		float placementAngle = 2.0f * PI * chair / chairCount;
+		glm::vec3 chairPosition = campfirePosition + glm::vec3(
+			chairRadius * sin(placementAngle), 0.0f,
+			chairRadius * cos(placementAngle));
+		glm::mat4 chairModel = glm::translate(model, chairPosition);
+		chairModel = glm::rotate(chairModel, placementAngle + PI, glm::vec3(0.0f, 1.0f, 0.0f));
+		chairModel = glm::scale(chairModel, glm::vec3(3.0f));
+		chairModel = glm::translate(chairModel, chairOffset);
+		glm::mat3 chairNormal = glm::transpose(glm::inverse(glm::mat3(view * chairModel)));
+		glm::mat4 chairMVP = projection * view * chairModel;
+		glUniformMatrix4fv(modelLoc, 1, 0, glm::value_ptr(chairMVP));
+		glUniformMatrix3fv(normalLoc, 1, 0, glm::value_ptr(chairNormal));
+		glDrawElements(GL_TRIANGLES, chairIndexCount, GL_UNSIGNED_INT, NULL);
+	}
 
 	glm::mat4 campfireModel = glm::translate(model, campfirePosition);
-	campfireModel = glm::scale(campfireModel, glm::vec3(1.3f));
+	campfireModel = glm::scale(campfireModel, glm::vec3(0.65f));
 	campfireModel = glm::translate(campfireModel, campfireOffset);
 	glm::mat3 campfireNormal = glm::transpose(glm::inverse(glm::mat3(view * campfireModel)));
 	glm::mat4 campfireMVP = projection * view * campfireModel;
 	glUniformMatrix4fv(modelLoc, 1, 0, glm::value_ptr(campfireMVP));
 	glUniformMatrix3fv(normalLoc, 1, 0, glm::value_ptr(campfireNormal));
-	glUniform4f(colourLoc, 0.72f, 0.28f, 0.06f, 1.0f);
+	glUniform4f(colourLoc, 0.30f, 0.13f, 0.05f, 1.0f);
 	glBindVertexArray(campfireVAO);
 	glDrawElements(GL_TRIANGLES, campfireIndexCount, GL_UNSIGNED_INT, NULL);
 
@@ -465,7 +473,57 @@ void display() {
 		glm::vec3(14.0f, 0.0f, 21.0f), glm::vec3(25.0f, 0.0f, 14.0f),
 		glm::vec3(38.0f, 0.0f, 13.0f), glm::vec3(-34.0f, 0.0f, 30.0f),
 		glm::vec3(-19.0f, 0.0f, 34.0f), glm::vec3(0.0f, 0.0f, 36.0f),
-		glm::vec3(18.0f, 0.0f, 33.0f), glm::vec3(38.0f, 0.0f, 31.0f)
+		glm::vec3(18.0f, 0.0f, 33.0f), glm::vec3(38.0f, 0.0f, 31.0f),
+		glm::vec3(-46.0f, 0.0f, -46.0f), glm::vec3(-40.0f, 0.0f, -46.0f),
+		glm::vec3(-34.0f, 0.0f, -46.0f), glm::vec3(-28.0f, 0.0f, -46.0f),
+		glm::vec3(-22.0f, 0.0f, -46.0f), glm::vec3(-16.0f, 0.0f, -46.0f),
+		glm::vec3(-10.0f, 0.0f, -46.0f), glm::vec3(-4.0f, 0.0f, -46.0f),
+		glm::vec3(2.0f, 0.0f, -46.0f), glm::vec3(8.0f, 0.0f, -46.0f),
+		glm::vec3(14.0f, 0.0f, -46.0f), glm::vec3(20.0f, 0.0f, -46.0f),
+		glm::vec3(26.0f, 0.0f, -46.0f), glm::vec3(32.0f, 0.0f, -46.0f),
+		glm::vec3(38.0f, 0.0f, -46.0f), glm::vec3(44.0f, 0.0f, -46.0f),
+		glm::vec3(-46.0f, 0.0f, -40.0f), glm::vec3(-34.0f, 0.0f, -40.0f),
+		glm::vec3(-16.0f, 0.0f, -40.0f), glm::vec3(2.0f, 0.0f, -40.0f),
+		glm::vec3(20.0f, 0.0f, -40.0f), glm::vec3(38.0f, 0.0f, -40.0f),
+		glm::vec3(44.0f, 0.0f, -40.0f), glm::vec3(-46.0f, 0.0f, -34.0f),
+		glm::vec3(-28.0f, 0.0f, -34.0f), glm::vec3(-22.0f, 0.0f, -34.0f),
+		glm::vec3(2.0f, 0.0f, -34.0f), glm::vec3(8.0f, 0.0f, -34.0f),
+		glm::vec3(-46.0f, 0.0f, -28.0f), glm::vec3(-22.0f, 0.0f, -28.0f),
+		glm::vec3(8.0f, 0.0f, -28.0f), glm::vec3(26.0f, 0.0f, -28.0f),
+		glm::vec3(32.0f, 0.0f, -28.0f), glm::vec3(-22.0f, 0.0f, -22.0f),
+		glm::vec3(-4.0f, 0.0f, -22.0f), glm::vec3(2.0f, 0.0f, -22.0f),
+		glm::vec3(8.0f, 0.0f, -22.0f), glm::vec3(26.0f, 0.0f, -22.0f),
+		glm::vec3(44.0f, 0.0f, -22.0f), glm::vec3(-34.0f, 0.0f, -16.0f),
+		glm::vec3(-28.0f, 0.0f, -16.0f), glm::vec3(38.0f, 0.0f, -16.0f),
+		glm::vec3(-46.0f, 0.0f, -10.0f), glm::vec3(-28.0f, 0.0f, -10.0f),
+		glm::vec3(-16.0f, 0.0f, -10.0f), glm::vec3(14.0f, 0.0f, -10.0f),
+		glm::vec3(32.0f, 0.0f, -10.0f), glm::vec3(-46.0f, 0.0f, -4.0f),
+		glm::vec3(-40.0f, 0.0f, -4.0f), glm::vec3(-34.0f, 0.0f, -4.0f),
+		glm::vec3(-28.0f, 0.0f, -4.0f), glm::vec3(-22.0f, 0.0f, -4.0f),
+		glm::vec3(20.0f, 0.0f, -4.0f), glm::vec3(26.0f, 0.0f, -4.0f),
+		glm::vec3(32.0f, 0.0f, -4.0f), glm::vec3(44.0f, 0.0f, -4.0f),
+		glm::vec3(-34.0f, 0.0f, 2.0f), glm::vec3(-22.0f, 0.0f, 2.0f),
+		glm::vec3(20.0f, 0.0f, 2.0f), glm::vec3(26.0f, 0.0f, 2.0f),
+		glm::vec3(-46.0f, 0.0f, 8.0f), glm::vec3(-22.0f, 0.0f, 8.0f),
+		glm::vec3(26.0f, 0.0f, 8.0f), glm::vec3(-46.0f, 0.0f, 14.0f),
+		glm::vec3(-34.0f, 0.0f, 14.0f), glm::vec3(-10.0f, 0.0f, 14.0f),
+		glm::vec3(32.0f, 0.0f, 14.0f), glm::vec3(44.0f, 0.0f, 14.0f),
+		glm::vec3(-46.0f, 0.0f, 20.0f), glm::vec3(-4.0f, 0.0f, 20.0f),
+		glm::vec3(2.0f, 0.0f, 20.0f), glm::vec3(8.0f, 0.0f, 20.0f),
+		glm::vec3(20.0f, 0.0f, 20.0f), glm::vec3(-46.0f, 0.0f, 26.0f),
+		glm::vec3(-4.0f, 0.0f, 26.0f), glm::vec3(2.0f, 0.0f, 26.0f),
+		glm::vec3(20.0f, 0.0f, 26.0f), glm::vec3(44.0f, 0.0f, 26.0f),
+		glm::vec3(-46.0f, 0.0f, 32.0f), glm::vec3(-40.0f, 0.0f, 32.0f),
+		glm::vec3(-28.0f, 0.0f, 32.0f), glm::vec3(-4.0f, 0.0f, 32.0f),
+		glm::vec3(8.0f, 0.0f, 32.0f), glm::vec3(26.0f, 0.0f, 32.0f),
+		glm::vec3(32.0f, 0.0f, 32.0f), glm::vec3(44.0f, 0.0f, 32.0f),
+		glm::vec3(-46.0f, 0.0f, 38.0f), glm::vec3(-40.0f, 0.0f, 38.0f),
+		glm::vec3(14.0f, 0.0f, 38.0f), glm::vec3(20.0f, 0.0f, 38.0f),
+		glm::vec3(38.0f, 0.0f, 38.0f), glm::vec3(44.0f, 0.0f, 38.0f),
+		glm::vec3(-46.0f, 0.0f, 44.0f), glm::vec3(-40.0f, 0.0f, 44.0f),
+		glm::vec3(-34.0f, 0.0f, 44.0f), glm::vec3(-28.0f, 0.0f, 44.0f),
+		glm::vec3(-22.0f, 0.0f, 44.0f), glm::vec3(-4.0f, 0.0f, 44.0f),
+		glm::vec3(2.0f, 0.0f, 44.0f), glm::vec3(14.0f, 0.0f, 44.0f)
 	};
 	const float treeScales[] = {
 		0.9f, 1.0f, 0.8f, 1.05f, 0.9f, 1.0f,
@@ -481,7 +539,8 @@ void display() {
 
 	for (int tree = 0; tree < sizeof(treePositions) / sizeof(treePositions[0]); ++tree) {
 		glm::mat4 treeModel = glm::translate(model, treePositions[tree]);
-		treeModel = glm::scale(treeModel, glm::vec3(treeScales[tree]));
+		treeModel = glm::scale(treeModel, glm::vec3(
+			treeScales[tree % (sizeof(treeScales) / sizeof(treeScales[0]))]));
 		glm::mat3 treeNormal = glm::transpose(glm::inverse(glm::mat3(view * treeModel)));
 		glm::mat4 treeMVP = projection * view * treeModel;
 
