@@ -1,13 +1,8 @@
 /************************************************
- *
- *             Example Four
- *
- *  A basic OpenGL program that draws a
- *  triangle on the screen in perspective with
- *  simple control over the eye position.  
- *  This program illustrates the construction of
- *  perspective and viewing transformations.
- *
+ *Christopher Fernandes 
+ *100864284
+ *A small 3D campsite environment built with OpenGL
+ *Assignment 1
  ************************************************/
 
 #ifdef WIN32
