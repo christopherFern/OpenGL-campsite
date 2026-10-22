@@ -34,6 +34,18 @@ GLuint tableVAO;
 GLsizei tableIndexCount;
 glm::vec3 tableOffset;
 const glm::vec3 tablePosition(0.0f, 0.0f, 0.0f);
+GLuint tentVAO;
+GLsizei tentIndexCount;
+glm::vec3 tentOffset;
+const glm::vec3 tentPosition(5.5f, 0.0f, 0.0f);
+GLuint chairVAO;
+GLsizei chairIndexCount;
+glm::vec3 chairOffset;
+const glm::vec3 chairPosition(-4.0f, 0.0f, 0.0f);
+GLuint campfireVAO;
+GLsizei campfireIndexCount;
+glm::vec3 campfireOffset;
+const glm::vec3 campfirePosition(0.0f, 0.0f, -5.0f);
 float angle = 0.0;
 double theta, phi;		// user's position  on a sphere centered on the object
 double r;				// radius of the sphere
@@ -42,6 +54,91 @@ GLuint ibuffer;
 glm::mat4 projection;	// projection matrix
 float eyex, eyey, eyez;	// eye position
 const float PI = 3.14159265358979323846;
+
+bool loadObjModel(const char* filename, const char* materialPath,
+	GLuint& vao, GLsizei& indexCount, glm::vec3& offset) {
+	std::vector<tinyobj::shape_t> shapes;
+	std::vector<tinyobj::material_t> materials;
+	std::string loadError = tinyobj::LoadObj(shapes, materials, filename, materialPath);
+	if (!loadError.empty()) {
+		fprintf(stderr, "Could not load %s: %s\n", filename, loadError.c_str());
+		return false;
+	}
+
+	std::vector<GLfloat> vertices;
+	std::vector<unsigned int> indices;
+	float minX = 0.0f, maxX = 0.0f;
+	float minY = 0.0f;
+	float minZ = 0.0f, maxZ = 0.0f;
+	bool hasVertex = false;
+	for (size_t shapeIndex = 0; shapeIndex < shapes.size(); ++shapeIndex) {
+		const tinyobj::mesh_t& mesh = shapes[shapeIndex].mesh;
+		if (mesh.positions.size() % 3 != 0 || mesh.normals.size() != mesh.positions.size()) {
+			fprintf(stderr, "Invalid vertex or normal data in %s\n", filename);
+			return false;
+		}
+
+		unsigned int vertexOffset = static_cast<unsigned int>(vertices.size() / 7);
+		for (size_t vertex = 0; vertex < mesh.positions.size() / 3; ++vertex) {
+			float x = mesh.positions[3 * vertex];
+			float y = mesh.positions[3 * vertex + 1];
+			float z = mesh.positions[3 * vertex + 2];
+			if (!hasVertex) {
+				minX = maxX = x;
+				minY = y;
+				minZ = maxZ = z;
+				hasVertex = true;
+			} else {
+				minX = glm::min(minX, x);
+				maxX = glm::max(maxX, x);
+				minY = glm::min(minY, y);
+				minZ = glm::min(minZ, z);
+				maxZ = glm::max(maxZ, z);
+			}
+
+			vertices.push_back(x);
+			vertices.push_back(y);
+			vertices.push_back(z);
+			vertices.push_back(1.0f);
+			vertices.push_back(mesh.normals[3 * vertex]);
+			vertices.push_back(mesh.normals[3 * vertex + 1]);
+			vertices.push_back(mesh.normals[3 * vertex + 2]);
+		}
+
+		for (size_t index = 0; index < mesh.indices.size(); ++index)
+			indices.push_back(vertexOffset + mesh.indices[index]);
+	}
+
+	if (!hasVertex || indices.empty()) {
+		fprintf(stderr, "No geometry was loaded from %s\n", filename);
+		return false;
+	}
+	indexCount = static_cast<GLsizei>(indices.size());
+	offset = glm::vec3(-(minX + maxX) * 0.5f, -minY, -(minZ + maxZ) * 0.5f);
+
+	GLuint vertexBuffer;
+	GLuint indexBuffer;
+	glGenVertexArrays(1, &vao);
+	glBindVertexArray(vao);
+	glGenBuffers(1, &vertexBuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(GLfloat),
+		vertices.data(), GL_STATIC_DRAW);
+	glGenBuffers(1, &indexBuffer);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int),
+		indices.data(), GL_STATIC_DRAW);
+
+	GLint vPosition = glGetAttribLocation(program, "vPosition");
+	glVertexAttribPointer(vPosition, 4, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), 0);
+	glEnableVertexAttribArray(vPosition);
+	GLint vNormal = glGetAttribLocation(program, "vNormal");
+	glVertexAttribPointer(vNormal, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat),
+		(void*)(4 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(vNormal);
+
+	return true;
+}
 
 /*
  *  The init procedure creates the OpenGL data structures
@@ -233,87 +330,15 @@ void init() {
 	glVertexAttribPointer(vNormal, 3, GL_FLOAT, GL_FALSE, 0, (void*) sizeof(planeVertices));
 	glEnableVertexAttribArray(vNormal);
 
-	std::vector<tinyobj::shape_t> tableShapes;
-	std::vector<tinyobj::material_t> tableMaterials;
-	std::string tableLoadError = tinyobj::LoadObj(
-		tableShapes, tableMaterials, "objects/wooden_table.obj", "objects/");
-	if (!tableLoadError.empty()) {
-		fprintf(stderr, "Could not load objects/wooden_table.obj: %s\n", tableLoadError.c_str());
+	if (!loadObjModel("objects/wooden_table.obj", "objects/",
+		tableVAO, tableIndexCount, tableOffset) ||
+		!loadObjModel("objects/Camp.obj", "objects/",
+			tentVAO, tentIndexCount, tentOffset) ||
+		!loadObjModel("objects/pipe+chair.obj", "objects/",
+			chairVAO, chairIndexCount, chairOffset) ||
+		!loadObjModel("objects/Survival bonfire.obj", "objects/",
+			campfireVAO, campfireIndexCount, campfireOffset))
 		exit(EXIT_FAILURE);
-	}
-
-	std::vector<GLfloat> tableVertices;
-	std::vector<unsigned int> tableIndices;
-	float minX = 0.0f, maxX = 0.0f;
-	float minY = 0.0f;
-	float minZ = 0.0f, maxZ = 0.0f;
-	bool hasTableVertex = false;
-	for (size_t shapeIndex = 0; shapeIndex < tableShapes.size(); ++shapeIndex) {
-		const tinyobj::mesh_t& mesh = tableShapes[shapeIndex].mesh;
-		if (mesh.positions.size() % 3 != 0 || mesh.normals.size() != mesh.positions.size()) {
-			fprintf(stderr, "Invalid vertex or normal data in objects/wooden_table.obj\n");
-			exit(EXIT_FAILURE);
-		}
-
-		unsigned int vertexOffset = static_cast<unsigned int>(tableVertices.size() / 7);
-		for (size_t vertex = 0; vertex < mesh.positions.size() / 3; ++vertex) {
-			float x = mesh.positions[3 * vertex];
-			float y = mesh.positions[3 * vertex + 1];
-			float z = mesh.positions[3 * vertex + 2];
-			if (!hasTableVertex) {
-				minX = maxX = x;
-				minY = y;
-				minZ = maxZ = z;
-				hasTableVertex = true;
-			} else {
-				minX = glm::min(minX, x);
-				maxX = glm::max(maxX, x);
-				minY = glm::min(minY, y);
-				minZ = glm::min(minZ, z);
-				maxZ = glm::max(maxZ, z);
-			}
-
-			tableVertices.push_back(x);
-			tableVertices.push_back(y);
-			tableVertices.push_back(z);
-			tableVertices.push_back(1.0f);
-			tableVertices.push_back(mesh.normals[3 * vertex]);
-			tableVertices.push_back(mesh.normals[3 * vertex + 1]);
-			tableVertices.push_back(mesh.normals[3 * vertex + 2]);
-		}
-
-		for (size_t index = 0; index < mesh.indices.size(); ++index)
-			tableIndices.push_back(vertexOffset + mesh.indices[index]);
-	}
-
-	if (!hasTableVertex || tableIndices.empty()) {
-		fprintf(stderr, "No table geometry was loaded from objects/wooden_table.obj\n");
-		exit(EXIT_FAILURE);
-	}
-	tableIndexCount = static_cast<GLsizei>(tableIndices.size());
-	tableOffset = glm::vec3(-(minX + maxX) * 0.5f, -minY, -(minZ + maxZ) * 0.5f);
-
-	GLuint tableVbuffer;
-	GLuint tableIbuffer;
-	glGenVertexArrays(1, &tableVAO);
-	glBindVertexArray(tableVAO);
-	glGenBuffers(1, &tableVbuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, tableVbuffer);
-	glBufferData(GL_ARRAY_BUFFER, tableVertices.size() * sizeof(GLfloat),
-		tableVertices.data(), GL_STATIC_DRAW);
-	glGenBuffers(1, &tableIbuffer);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, tableIbuffer);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, tableIndices.size() * sizeof(unsigned int),
-		tableIndices.data(), GL_STATIC_DRAW);
-
-	glUseProgram(program);
-	vPosition = glGetAttribLocation(program, "vPosition");
-	glVertexAttribPointer(vPosition, 4, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), 0);
-	glEnableVertexAttribArray(vPosition);
-	vNormal = glGetAttribLocation(program, "vNormal");
-	glVertexAttribPointer(vNormal, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat),
-		(void*)(4 * sizeof(GLfloat)));
-	glEnableVertexAttribArray(vNormal);
 
 }
 
@@ -379,6 +404,38 @@ void display() {
 	glUniform4f(colourLoc, 0.42f, 0.22f, 0.09f, 1.0f);
 	glBindVertexArray(tableVAO);
 	glDrawElements(GL_TRIANGLES, tableIndexCount, GL_UNSIGNED_INT, NULL);
+
+	glm::mat4 tentModel = glm::translate(model, tentPosition);
+	tentModel = glm::translate(tentModel, tentOffset);
+	glm::mat3 tentNormal = glm::transpose(glm::inverse(glm::mat3(view * tentModel)));
+	glm::mat4 tentMVP = projection * view * tentModel;
+	glUniformMatrix4fv(modelLoc, 1, 0, glm::value_ptr(tentMVP));
+	glUniformMatrix3fv(normalLoc, 1, 0, glm::value_ptr(tentNormal));
+	glUniform4f(colourLoc, 0.88f, 0.48f, 0.08f, 1.0f);
+	glBindVertexArray(tentVAO);
+	glDrawElements(GL_TRIANGLES, tentIndexCount, GL_UNSIGNED_INT, NULL);
+
+	glm::mat4 chairModel = glm::translate(model, chairPosition);
+	chairModel = glm::scale(chairModel, glm::vec3(3.0f));
+	chairModel = glm::translate(chairModel, chairOffset);
+	glm::mat3 chairNormal = glm::transpose(glm::inverse(glm::mat3(view * chairModel)));
+	glm::mat4 chairMVP = projection * view * chairModel;
+	glUniformMatrix4fv(modelLoc, 1, 0, glm::value_ptr(chairMVP));
+	glUniformMatrix3fv(normalLoc, 1, 0, glm::value_ptr(chairNormal));
+	glUniform4f(colourLoc, 0.46f, 0.25f, 0.10f, 1.0f);
+	glBindVertexArray(chairVAO);
+	glDrawElements(GL_TRIANGLES, chairIndexCount, GL_UNSIGNED_INT, NULL);
+
+	glm::mat4 campfireModel = glm::translate(model, campfirePosition);
+	campfireModel = glm::scale(campfireModel, glm::vec3(1.3f));
+	campfireModel = glm::translate(campfireModel, campfireOffset);
+	glm::mat3 campfireNormal = glm::transpose(glm::inverse(glm::mat3(view * campfireModel)));
+	glm::mat4 campfireMVP = projection * view * campfireModel;
+	glUniformMatrix4fv(modelLoc, 1, 0, glm::value_ptr(campfireMVP));
+	glUniformMatrix3fv(normalLoc, 1, 0, glm::value_ptr(campfireNormal));
+	glUniform4f(colourLoc, 0.72f, 0.28f, 0.06f, 1.0f);
+	glBindVertexArray(campfireVAO);
+	glDrawElements(GL_TRIANGLES, campfireIndexCount, GL_UNSIGNED_INT, NULL);
 
 	const float coneRadii[4] = { 3.0f, 2.35f, 1.7f, 1.1f };
 	const float coneBases[4] = { 2.5f, 4.25f, 6.0f, 7.75f };
